@@ -2,6 +2,7 @@ package edu.edx.yuri.facebookrecipes.recipemain.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -11,6 +12,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,9 +51,27 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_main);
         ButterKnife.bind(this);
-        setInjection();
+        setupInjection();
+        setupImageLoader();
         presenter.onCreate();
         presenter.getNextRecipe();
+    }
+
+    private void setupImageLoader() {
+        RequestListener glideRequestListener = new RequestListener() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target target, boolean isFirstResource) {
+                presenter.imageError(e.getLocalizedMessage());
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Object resource, Object model, Target target, DataSource dataSource, boolean isFirstResource) {
+                presenter.imageReady();//poderia ser feito  aqui mesmo na activity, professor edx optou por usar presenter
+                return false;
+            }
+        };
+        //imageLoader.setOnFinishedImageLoadingListener(glideRequestListener);
     }
 
     @Override
@@ -94,44 +118,9 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
 
     }
 
-    private void setInjection() {
+    private void setupInjection() {
 
-        presenter = new RecipeMainPresenter() {
-            @Override
-            public void onCreate() {
 
-            }
-
-            @Override
-            public void onDestroy() {
-
-            }
-
-            @Override
-            public void dismissRecipe() {
-
-            }
-
-            @Override
-            public void getNextRecipe() {
-
-            }
-
-            @Override
-            public void saveRecipe(Recipe recipe) {
-
-            }
-
-            @Override
-            public void enEventMainThread(RecipeMainEvent event) {
-
-            }
-
-            @Override
-            public RecipeMainView getView() {
-                return null;
-            }
-        };
 
     }
 

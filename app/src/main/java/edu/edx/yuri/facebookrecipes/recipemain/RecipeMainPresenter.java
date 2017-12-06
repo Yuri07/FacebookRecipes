@@ -14,11 +14,14 @@ public interface RecipeMainPresenter {
     void onCreate();
     void onDestroy();
 
+    void saveRecipe(Recipe recipe);
     void dismissRecipe();
     void getNextRecipe();
-    void saveRecipe(Recipe recipe);
 
-    void enEventMainThread(RecipeMainEvent event);
+    void onEventMainThread(RecipeMainEvent event);
+
+    void imageReady();//podemos usar esses dois metodos quando a imagem esta carregando
+    void imageError(String error);
 
     RecipeMainView getView();//Isso vai ser util para testes.na licao 5
 

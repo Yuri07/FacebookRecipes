@@ -2,6 +2,7 @@
     <string name="app_name">FacebookRecipes</string>
     <string name="facebook_app_id">337530110048404</string>
     <string name="food_api_key">e7e905f69301ac9619cf6a28aaff8af1</string>
+    <string name="food_api_key2">api key food implementado manualmente em RecipeMainRepository</string>
 
     <string name="login.error">Impossível iniciar sessão %s</string>
     <string name="login.cancel.error">Início de sessão cancelada</string>
