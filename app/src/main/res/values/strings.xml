@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">FacebookRecipes</string>
+    <string name="facebook_app_id">337530110048404</string>
+    <string name="food_api_key">e7e905f69301ac9619cf6a28aaff8af1</string>
+
+    <string name="login.error">Impossível iniciar sessão %s</string>
+    <string name="login.cancel.error">Início de sessão cancelada</string>
+    <string name="recipemain.error">Impossivel obter informações %s</string>
+    <string name="recipemain.notice.saved">Salvo com sucesso</string>
+    <string name="recipemain.menu.action.list">Receitas salvas</string>
+
+    <string name="global.menu.action.logout">Fechar sessão</string>
+    <string name="recipemain.menu.action.main">Escolher receita</string>
+
+</resources>
