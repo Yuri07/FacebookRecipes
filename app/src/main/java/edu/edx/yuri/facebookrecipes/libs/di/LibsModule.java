@@ -45,7 +45,7 @@ public class LibsModule {
 
     @Provides
     @Singleton
-    Activity providesFragment(){
+    Activity providesActivity(){
         return this.activity;
     }
 

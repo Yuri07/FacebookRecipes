@@ -7,7 +7,13 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
+import edu.edx.yuri.facebookrecipes.libs.di.LibsModule;
 import edu.edx.yuri.facebookrecipes.login.ui.LoginActivity;
+import edu.edx.yuri.facebookrecipes.recipemain.di.DaggerRecipeMainComponent;
+import edu.edx.yuri.facebookrecipes.recipemain.di.RecipeMainComponent;
+import edu.edx.yuri.facebookrecipes.recipemain.di.RecipeMainModule;
+import edu.edx.yuri.facebookrecipes.recipemain.ui.RecipeMainActivity;
+import edu.edx.yuri.facebookrecipes.recipemain.ui.RecipeMainView;
 
 /**
  * Created by yuri_ on 04/12/2017.
@@ -48,4 +54,13 @@ public class FacebookRecipesApp extends Application {
         startActivity(intent);
 
     }
+
+    public RecipeMainComponent getRecipeMainComponent(RecipeMainActivity activity, RecipeMainView view){
+        return DaggerRecipeMainComponent
+                .builder()
+                .libsModule(new LibsModule(activity))
+                .recipeMainModule(new RecipeMainModule(view))
+                .build();
+    }
+
 }

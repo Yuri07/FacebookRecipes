@@ -1,6 +1,7 @@
 package edu.edx.yuri.facebookrecipes.recipemain.ui;
 
 import android.content.Intent;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import edu.edx.yuri.facebookrecipes.entities.Recipe;
 import edu.edx.yuri.facebookrecipes.libs.base.ImageLoader;
 import edu.edx.yuri.facebookrecipes.recipelist.ui.RecipeListActivity;
 import edu.edx.yuri.facebookrecipes.recipemain.RecipeMainPresenter;
+import edu.edx.yuri.facebookrecipes.recipemain.di.RecipeMainComponent;
 import edu.edx.yuri.facebookrecipes.recipemain.events.RecipeMainEvent;
 
 public class RecipeMainActivity extends AppCompatActivity implements RecipeMainView{
@@ -45,6 +47,7 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
     private RecipeMainPresenter presenter;
     private Recipe currentRecipe;
     private ImageLoader imageLoader;
+    private RecipeMainComponent component;//nao estamos fazendo injecao de dep. implicimente por razoes de testes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +74,7 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
                 return false;
             }
         };
-        //imageLoader.setOnFinishedImageLoadingListener(glideRequestListener);
+        imageLoader.setOnFinishedImageLoadingListener(glideRequestListener);
     }
 
     @Override
@@ -120,8 +123,19 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
 
     private void setupInjection() {
 
+        FacebookRecipesApp app = (FacebookRecipesApp) getApplication();
+        component = app.getRecipeMainComponent(this, this);
+        imageLoader = getImageLoader();
+        presenter = getPresenter();
 
+    }
 
+    private ImageLoader getImageLoader() {
+        return component.getImageLoader();
+    }
+
+    private RecipeMainPresenter getPresenter() {
+        return component.getPresenter();
     }
 
     @Override
