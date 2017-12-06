@@ -6,9 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -31,7 +35,7 @@ import edu.edx.yuri.facebookrecipes.recipemain.RecipeMainPresenter;
 import edu.edx.yuri.facebookrecipes.recipemain.di.RecipeMainComponent;
 import edu.edx.yuri.facebookrecipes.recipemain.events.RecipeMainEvent;
 
-public class RecipeMainActivity extends AppCompatActivity implements RecipeMainView{
+public class RecipeMainActivity extends AppCompatActivity implements RecipeMainView, SwipeGestureListener {
 
     @BindView(R.id.imgRecipe)
     ImageView imgRecipe;
@@ -56,8 +60,24 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
         ButterKnife.bind(this);
         setupInjection();
         setupImageLoader();
+        setupGestureDetector();
         presenter.onCreate();
         presenter.getNextRecipe();
+    }
+
+    private void setupGestureDetector() {
+
+        final GestureDetector gestureDetector = new GestureDetector(this, new SwipeGestureDetector(this));
+        View.OnTouchListener gestureOnTouchListener = new View.OnTouchListener(){
+            @Override
+            public boolean onTouch(View view, MotionEvent event){
+
+                return gestureDetector.onTouchEvent(event);
+            }
+        };
+
+        imgRecipe.setOnTouchListener(gestureOnTouchListener);
+
     }
 
     private void setupImageLoader() {
@@ -108,6 +128,7 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
     }
 
     @OnClick(R.id.imgKeep)
+    @Override
     public void onKeep(){
         if(currentRecipe!=null){
             presenter.saveRecipe(currentRecipe);
@@ -115,6 +136,7 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
     }
 
     @OnClick(R.id.imgDismiss)
+    @Override
     public void onDismiss(){
 
         presenter.dismissRecipe();
@@ -166,14 +188,41 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
         imgDismiss.setVisibility(View.GONE);
     }
 
+    private void clearImage(){
+        imgRecipe.setImageResource(0);
+    }
+
     @Override
     public void saveAnimation() {
-
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.save_animation);
+        animation.setAnimationListener(getAnimationListener());
+        imgRecipe.startAnimation(animation);
     }
 
     @Override
     public void dismissAnimation() {
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.dismiss_animation);
+        animation.setAnimationListener(getAnimationListener());
+        imgRecipe.startAnimation(animation);
+    }
 
+    private Animation.AnimationListener getAnimationListener(){
+        return new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                clearImage();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        };
     }
 
     @Override
@@ -192,4 +241,5 @@ public class RecipeMainActivity extends AppCompatActivity implements RecipeMainV
         String msgError = String.format(getString(R.string.recipemain_error));
         Snackbar.make(layoutContainer, msgError, Snackbar.LENGTH_SHORT).show();
     }
+
 }
