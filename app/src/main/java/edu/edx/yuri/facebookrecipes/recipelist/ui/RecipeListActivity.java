@@ -10,9 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.bumptech.glide.Glide;
-
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,10 +18,8 @@ import butterknife.OnClick;
 import edu.edx.yuri.facebookrecipes.FacebookRecipesApp;
 import edu.edx.yuri.facebookrecipes.R;
 import edu.edx.yuri.facebookrecipes.entities.Recipe;
-import edu.edx.yuri.facebookrecipes.libs.GlideImageLoader;
-import edu.edx.yuri.facebookrecipes.libs.base.ImageLoader;
 import edu.edx.yuri.facebookrecipes.recipelist.RecipeListPresenter;
-import edu.edx.yuri.facebookrecipes.recipelist.events.RecipeListEvent;
+import edu.edx.yuri.facebookrecipes.recipelist.di.RecipeListComponent;
 import edu.edx.yuri.facebookrecipes.recipelist.ui.adapters.OnItemClickListener;
 import edu.edx.yuri.facebookrecipes.recipelist.ui.adapters.RecipeAdapter;
 import edu.edx.yuri.facebookrecipes.recipemain.ui.RecipeMainActivity;
@@ -36,8 +31,9 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;//como nao usamos snackbars aqui nao pegamos o R.id.coordinatorlayout
 
-    RecipeAdapter adapter;
-    RecipeListPresenter presenter;
+    private RecipeAdapter adapter;
+    private RecipeListPresenter presenter;
+    private RecipeListComponent component;//nao estamos fazendo injecao de dep. implicimente por razoes de testes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,51 +89,10 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     }
 
     private void setupInjection() {
-
-        ImageLoader loader = new GlideImageLoader(Glide.with(this));
-        Recipe recipe = new Recipe();
-        recipe.setFavorite(false);
-        recipe.setTitle("Prueba");
-        recipe.setSourceURL("http://static.food2fork.com/icedcoffee5766.jpg");
-        recipe.setImageURL("http://static.food2fork.com/icedcoffee5766.jpg");
-        adapter = new RecipeAdapter(Arrays.asList(recipe), loader, this);
-        presenter = new RecipeListPresenter() {
-            @Override
-            public void onCreate() {
-
-            }
-
-            @Override
-            public void onDestroy() {
-
-            }
-
-            @Override
-            public void getRecipes() {
-
-            }
-
-            @Override
-            public void removeRecipe(Recipe recipe) {
-
-            }
-
-            @Override
-            public void toggleFavorite(Recipe recipe) {
-
-            }
-
-            @Override
-            public void onEveentMainThread(RecipeListEvent event) {
-
-            }
-
-            @Override
-            public RecipeListView getView() {
-                return null;
-            }
-        };
-
+        FacebookRecipesApp app = (FacebookRecipesApp) getApplication();
+        component = app.getRecipeListComponent(this, this, this);
+        presenter = getPresenter();//poderia ser 'component.getPresenter();' (metodos criados para propositos de teste)
+        adapter = getAdapter();
     }
 
     private void setupRecyclerView() {
@@ -185,5 +140,13 @@ public class RecipeListActivity extends AppCompatActivity implements RecipeListV
     @Override
     public void onDeleteClick(Recipe recipe) {
         presenter.removeRecipe(recipe);
+    }
+
+    public RecipeAdapter getAdapter() {
+        return component.getAdapter();
+    }
+
+    public RecipeListPresenter getPresenter() {
+        return component.getPresenter();
     }
 }
